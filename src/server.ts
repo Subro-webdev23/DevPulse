@@ -1,12 +1,18 @@
-import express, { type Request, type Response } from "express"
-const app = express()
-const port = 3000
-
-app.get('/', (req : Request, res: Response) => {
-  res.send('Hello World!')
-})
+import app from "./app"
+import { connectDB } from "./DB";
+import config from "./config";
 
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(config.port, () => {
+      console.log(`Server running on port ${config.port}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+startServer();
