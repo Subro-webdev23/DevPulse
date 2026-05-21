@@ -3,11 +3,24 @@ import type { User } from "./user.interface";
 import bcrypt from "bcrypt";
 
 const getAllUserFromDB = async()=>{
-  console.log("Get All User From DB");  
+    try {
+      const result = await pool.query('SELECT id, name, email, role, created_at, updated_at FROM users;');
+      return result.rows; 
+    } catch (error) {
+      console.error('Error fetching users from DB:', error);
+      throw error;
+    }
 }
 
-const getSingleUserFromDB = async()=>{
-  console.log("Get All User From DB");  
+const getSingleUserFromDB = async(id: string)=>{
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1;', [id]);
+    delete result.rows[0].password;
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching single user from DB:', error);
+    throw error;
+  }
 }
 
 const createUserIntoDB = async(payload: User)=>{
@@ -25,13 +38,39 @@ const createUserIntoDB = async(payload: User)=>{
      return result.rows[0];
 }
 
-const updateUserFromDB = async()=>{
-  console.log("Get All User From DB");  
-}
+const updateUserFromDB = async (id: string, updateData: User) => {
+    try {        
+      const {name, password, role} = updateData;
+        const result = await pool.query(
+        `
+          UPDATE users 
+          SET 
+          name=COALESCE($1,name),
+          password=COALESCE($2,password),
+          role=COALESCE($3,role)
 
-const deleteUserFromDB = async()=>{
-  console.log("Get All User From DB");  
-}
+          WHERE id=$4 RETURNING name, role, email
+        `,
+          [name, password, role, id],
+        );
+      return result.rows[0];
+
+    } catch (error) {
+        console.error('Error updating user in DB:', error);
+        throw error;
+    }
+};
+
+const deleteUserFromDB = async (id: string) => {
+    try {       
+        const result = await pool.query(`DELETE FROM users WHERE id = $1 RETURNING *;`, [id]);
+        return result.rows || null;
+
+    } catch (error : any) {
+        console.error('Error deleting user from DB:', error);
+        throw error;
+    }
+};
 
 export const userService = {
   createUserIntoDB,
