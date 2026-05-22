@@ -64,7 +64,7 @@ const createIssue = async (req: Request, res: Response) => {
     try {
         const payload = req.body;
 
-        const reporterId = req.body.reporter_id; 
+        const reporterId = req.user?.id; 
 
         if (!reporterId) {
             return res.status(400).json({
