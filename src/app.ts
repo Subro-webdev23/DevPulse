@@ -12,7 +12,7 @@ app.get('/', (req : Request, res: Response) => {
 })
 
 app.use("/api/users", userRoute)
-app.use("/api/issue", issueRoute)
+app.use("/api/issues", issueRoute)
 
 
 export default app;
