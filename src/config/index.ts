@@ -8,4 +8,6 @@ dotenv.config({
 export default {
   port: process.env.PORT,
   connection_string: process.env.CONNECTION_STRING,
+  jwt_access_secret: process.env.JWT_ACCESS_SECRET,
+  jwt_refresh_secret: process.env.JWT_REFRESH_SECRET
 };
