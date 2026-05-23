@@ -28,7 +28,7 @@ const login = async (req: Request, res: Response) => {
 
     res.cookie("refreshToken", result.refreshToken, {
       httpOnly: true,
-      secure: false, 
+      secure: true, 
       sameSite: "lax",
     });
 
